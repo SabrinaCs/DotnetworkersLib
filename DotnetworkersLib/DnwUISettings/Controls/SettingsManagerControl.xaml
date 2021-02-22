@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="Dnw.UI.Settings.Controls.SettingsManagerControl"
+			xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			xmlns:re="clr-namespace:Dnw.UI.Settings.Controls"		
+			xmlns:ctl="clr-namespace:Dnw.UI.Settings.Controls"
+			xmlns:lconv="clr-namespace:Dnw.Base.Wpf.Converters;assembly=Dnw.Base.Wpf"
+			mc:Ignorable="d" d:DesignHeight="640" d:DesignWidth="960">
+	<UserControl.Resources>
+		<lconv:BoolToVisibilityConverter x:Key="boolToVisibilityConverter" />
+	</UserControl.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>		
+		<TabControl Grid.Row="0">
+            <TabItem Header="{x:Static re:SettingsManagerControlRx.txtSMCApplicationTabHeader}" Visibility="{Binding AppTabIsVisible, Converter={StaticResource boolToVisibilityConverter}}">
+				<ctl:SettingsPage x:Name="PageApplicationSettings"/>
+			</TabItem>
+            <TabItem Header="{x:Static re:SettingsManagerControlRx.txtSMCUserTabHeader}" Visibility="{Binding UsrTabIsVisible, Converter={StaticResource boolToVisibilityConverter}}">
+				<ctl:SettingsPage x:Name="PageUserSettings"/>
+			</TabItem>
+
+		</TabControl>
+		<StackPanel Grid.Row="1" FlowDirection="RightToLeft" Orientation="Horizontal" Margin="5,2,5,2">
+			<Button Name="SaveButton" Margin="5"  Click="SaveButton_Click" Width="100" >
+                <TextBlock Padding ="10,5,10,5" Text="{x:Static re:SettingsManagerControlRx.txtSMCSave}"/>
+			</Button>
+			<Button Name="CancelButton" Margin="5"  Click="CancelButton_Click" Width="100" >
+                <TextBlock Padding ="10,5,10,5" Text="{x:Static re:SettingsManagerControlRx.txtSMCCancel}"/>
+			</Button>
+		</StackPanel>
+	</Grid>
+</UserControl>

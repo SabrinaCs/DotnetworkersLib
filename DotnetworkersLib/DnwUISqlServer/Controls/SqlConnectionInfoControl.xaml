@@ -1,0 +1,212 @@
+﻿<UserControl x:Class="Dnw.UI.SqlServer.Controls.SqlConnectionInfoControl"
+				xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+				xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+				xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 				
+				xmlns:re="clr-namespace:Dnw.UI.SqlServer.Controls"
+				xmlns:lconv="clr-namespace:Dnw.Base.Wpf.Converters;assembly=Dnw.Base.Wpf"
+				xmlns:wix="http://schemas.xceed.com/wpf/xaml/toolkit"
+				mc:Ignorable="d" d:DesignHeight="640" d:DesignWidth="960">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="pack://application:,,,/Dnw.Base.Wpf;component/Styles.xaml"/>
+			</ResourceDictionary.MergedDictionaries>
+			<lconv:BoolToIsValidImageConverter x:Key="boolToIsValidImageConverter" />
+			<lconv:BoolToIsValidStringConverter x:Key="boolToIsValidStringConverter" />
+
+			<Style x:Key="PanelEditMode" TargetType="{x:Type Grid}">
+				<Setter Property="Background" Value="#ffefefef"  />
+				<Style.Triggers>
+					<DataTrigger Binding="{Binding IsInEditMode}" Value="True">
+						<Setter Property="Background" Value="#ffcccccc" />
+					</DataTrigger>
+				</Style.Triggers>
+			</Style>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="4*"/>
+			<ColumnDefinition Width="5*"/>
+		</Grid.ColumnDefinitions>
+
+		<Menu Grid.Row="0" Grid.ColumnSpan="2" Height="38" Margin="10,10,10,0" VerticalAlignment="Top" BorderThickness="2"
+			  Foreground="Black" FontSize="16" FontWeight="Normal">
+            <MenuItem Name="mnuEdit" Header="{x:Static re:SqlConnectionInfoControlRx.mnuSCICEdit}" Click="mnuClick" Margin="2,4,2,2" Height="32" IsEnabled="{Binding IsNotInEditMode}">
+				<MenuItem.Icon>
+					<Image Source="/Dnw.UI.SqlServer;component/Images/btn_032_113.png" Height="24" Width="24"/>
+				</MenuItem.Icon>
+			</MenuItem>
+            <MenuItem Name="mnuUndo" Header="{x:Static re:SqlConnectionInfoControlRx.mnuSCICUndo}" Click="mnuClick" Margin="2,4,2,2" Height="32" IsEnabled="{Binding IsChanged}">
+				<MenuItem.Icon>
+					<Image Source="/Dnw.UI.SqlServer;component/Images/btn_032_368.png" Height="24" Width="24"/>
+				</MenuItem.Icon>
+			</MenuItem>
+            <MenuItem Name="mnuNew" Header="{x:Static re:SqlConnectionInfoControlRx.mnuSCICNew}" Click="mnuClick" Margin="2,4,2,2" Height="32" >
+				<MenuItem.Icon>
+					<Image Source="/Dnw.UI.SqlServer;component/Images/btn_032_109.png" Height="24" Width="24"/>
+				</MenuItem.Icon>
+			</MenuItem>
+            <MenuItem Name="mnuClone" Header="{x:Static re:SqlConnectionInfoControlRx.mnuSCICClone}" Click="mnuClick" Margin="2,4,2,2" Height="32" >
+				<MenuItem.Icon>
+					<Image Source="/Dnw.UI.SqlServer;component/Images/btn_032_120.png" Height="24" Width="24"/>
+				</MenuItem.Icon>
+			</MenuItem>
+
+            <MenuItem Name="mnuDelete" Header="{x:Static re:SqlConnectionInfoControlRx.mnuSCICDelete}" Click="mnuClick" Margin="2,4,2,2" Height="32" IsEnabled="{Binding IsInEditMode}">
+				<MenuItem.Icon>
+					<Image Source="/Dnw.UI.SqlServer;component/Images/btn_032_110.png" Height="24" Width="24"/>
+				</MenuItem.Icon>
+			</MenuItem>
+            <MenuItem Name="mnuExport" Header="{x:Static re:SqlConnectionInfoControlRx.mnuSCICExport}" Click="mnuClick" Margin="2,4,2,2" Height="32" IsEnabled="{Binding IsNotInEditMode}">
+				<MenuItem.Icon>
+					<Image Source="/Dnw.UI.SqlServer;component/Images/btn_032_142.png" Height="24" Width="24"/>
+				</MenuItem.Icon>
+			</MenuItem>
+            <MenuItem Name="mnuImport" Header="{x:Static re:SqlConnectionInfoControlRx.mnuSCICImport}" Click="mnuClick" Margin="2,4,2,2" Height="32"  IsEnabled="{Binding IsNotInEditMode}">
+				<MenuItem.Icon>
+					<Image Source="/Dnw.UI.SqlServer;component/Images/btn_032_172.png" Height="24" Width="24"/>
+				</MenuItem.Icon>
+			</MenuItem>
+
+
+
+
+		</Menu>
+		<Grid Grid.Row="1" Grid.ColumnSpan="2" >
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="120" />
+			</Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static re:SqlConnectionInfoControlRx.txtSCICMainInstruction}"  Margin="10,10,10,10" Style="{StaticResource MainInstruction}" />
+			<Image Grid.Row="0" Grid.Column="1"  Source="{Binding EditImage}" Width="32" Height="32"  />
+
+		</Grid>
+		<ListBox  Grid.Row="2" Grid.Column="0" ItemsSource="{Binding SqlConnections}" SelectedItem="{Binding CurrentConnection}">
+
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<StackPanel FlowDirection="LeftToRight" Orientation="Horizontal" Margin="4,4,4,4">
+						<Image Source="{Binding IsValid, Converter={StaticResource boolToIsValidImageConverter}, Mode=OneWay}" 
+								   Width="16" Height="16" Margin="4,2,4,2" ToolTip="{Binding IsValid, Converter={StaticResource boolToIsValidStringConverter}}"/>
+						<TextBlock Text="{Binding Position}" Margin="4,2,4,2" />
+						<TextBlock Text="{Binding ConnectionID}" Margin="4,2,4,2"/>
+						<TextBlock Text="{Binding Description}" Margin="4,2,4,2"/>
+						<TextBlock Text="{Binding ConnectionType}" Margin="4,2,4,2"/>
+					</StackPanel>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+
+		</ListBox>
+		<ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Grid.Row="2"  Margin="3,3,3,3" Padding="0,0,0,0" MaxHeight="600" VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+			<Grid   Style="{StaticResource PanelEditMode }" Margin="0,0,0,0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="4*"/>
+					<ColumnDefinition Width="3*"/>
+					<ColumnDefinition Width="3*"/>
+					<ColumnDefinition Width="2*"/>
+				</Grid.ColumnDefinitions>
+				<Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Margin="10,10,5,0">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+                    <TextBlock  Grid.Row="0" Grid.Column="0" Text="{x:Static re:SqlConnectionInfoControlRx.txtSCICConnDataHeader}"  Margin="5,0,3,0" Style="{StaticResource Header}" />
+					<Rectangle  Grid.Row="0" Grid.Column="1" Stroke="DarkGray" StrokeThickness="1" Height="1"	 						  
+										  HorizontalAlignment="Stretch" VerticalAlignment=" Stretch" Margin="5,0,5,0"/>
+				</Grid>
+                <Label Grid.Row="1" Grid.Column="0" Content="{x:Static re:SqlConnectionInfoControlRx.lblSCICID}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Margin="5,3,5,3"/>
+				<TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Name="txtConnectionID"   Text="{Binding CurrentConnection.ConnectionID}" Margin="0,1,52,2" IsEnabled="{Binding IsInEditMode}" />
+                <Label Grid.Row="2" Grid.Column="0" Content="{x:Static re:SqlConnectionInfoControlRx.lblSCICDescription}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Margin="5,3,5,3"/>
+				<TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Name="txtConnectionDescription" Text="{Binding CurrentConnection.Description}" Margin="0,2,10,1"  IsEnabled="{Binding IsInEditMode}"/>
+                <Label Grid.Row="3" Grid.Column="0" Content="{x:Static re:SqlConnectionInfoControlRx.lblSCICPosition}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Margin="5,3,5,3"/>
+				<wix:MaskedTextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Name="txtPosition"  PromptChar=" " Mask="##0" Text="{Binding CurrentConnection.Position}" Margin="0,1,52,2"  IsEnabled="{Binding IsInEditMode}" />
+                <Label Grid.Row="4" Grid.Column="0" Content="{x:Static re:SqlConnectionInfoControlRx.lblSCICType}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Margin="5,3,5,3"/>
+				<ComboBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" 	Name="cboConnectionType" ItemsSource="{Binding ConnectionTypes}" SelectedValuePath="Item1" SelectedValue="{Binding CurrentConnection.ConnectionType, Mode=TwoWay}"  IsEnabled="{Binding IsInEditMode}" >
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<StackPanel FlowDirection="LeftToRight" Orientation="Vertical" Margin="4,4,4,4">
+								<TextBlock Text="{Binding Item2}"/>
+							</StackPanel>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+				<Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4" Margin="10,10,5,0">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+                    <TextBlock  Grid.Row="0" Grid.Column="0" Text="{x:Static re:SqlConnectionInfoControlRx.txtSCICSqlDataHeader}"  Margin="5,0,3,0" Style="{StaticResource Header}" />
+					<Rectangle  Grid.Row="0" Grid.Column="1" Stroke="DarkGray" StrokeThickness="1" Height="1"	 						  
+										  HorizontalAlignment="Stretch" VerticalAlignment=" Stretch" Margin="5,0,5,0"/>
+				</Grid>
+
+                <Label Grid.Row="6" Grid.Column="0" Content="{x:Static re:SqlConnectionInfoControlRx.lblSCICServer}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Margin="5,3,5,3"/>
+				<TextBox Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="3" Name="txtServer" Text="{Binding CurrentConnection.Server}" Margin="0,2,10,1"  IsEnabled="{Binding IsInEditMode}"/>
+
+                <Label Grid.Row="7" Grid.Column="0" Content="{x:Static re:SqlConnectionInfoControlRx.lblSCICDatabase}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Margin="5,3,5,3"/>
+				<TextBox Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" Name="txtDatabase" Text="{Binding CurrentConnection.Database}" Margin="0,2,10,1"  IsEnabled="{Binding IsInEditMode}"/>
+
+                <Label Grid.Row="8" Grid.Column="0" Content="{x:Static re:SqlConnectionInfoControlRx.lblSCICTrusted}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Margin="5,3,5,3"/>
+				<CheckBox Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="3" Name="chkUseTrustedConnection" IsChecked="{Binding CurrentConnection.Trusted}" Margin="0,2,10,1"  IsEnabled="{Binding IsInEditMode}"/>
+
+                <Label Grid.Row="9" Grid.Column="0" Content="{x:Static re:SqlConnectionInfoControlRx.lblSCICUsername}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Margin="5,3,5,3"/>
+				<TextBox Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="3" Name="txtUsername" Text="{Binding CurrentConnection.Username}" Margin="0,2,10,1"  IsEnabled="{Binding SqlConnectionIsInEditMode}"/>
+
+                <Label Grid.Row="10" Grid.Column="0" Content="{x:Static re:SqlConnectionInfoControlRx.lblSCICPassword}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Margin="5,3,5,3"/>
+				<PasswordBox Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="3" Name="txtPassword"  PasswordChanged="txtPassword_PasswordChanged" Margin="0,2,10,1"  IsEnabled="{Binding SqlConnectionIsInEditMode}"/>
+
+                <Label Grid.Row="11" Grid.Column="0" Content="{x:Static re:SqlConnectionInfoControlRx.lblSCICConnectionTimeout}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Margin="5,3,5,3"/>
+				<wix:MaskedTextBox Grid.Row="11" Grid.Column="1" Grid.ColumnSpan="2" Name="txtConnectionTimeout"  PromptChar=" " Mask="########" Text="{Binding CurrentConnection.ConnectionTimeout}" Margin="0,1,52,2" IsEnabled="{Binding IsInEditMode}" />
+
+                <Label Grid.Row="12" Grid.Column="0" Content="{x:Static re:SqlConnectionInfoControlRx.lblSCICCommandTimeout}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Margin="5,3,5,3"/>
+				<wix:MaskedTextBox Grid.Row="12" Grid.Column="1" Grid.ColumnSpan="2" Name="txtCommandTimeout"  PromptChar=" " Mask="#######" Text="{Binding CurrentConnection.CommandsTimeout}" Margin="0,1,52,2"  IsEnabled="{Binding IsInEditMode}"/>
+				<StackPanel Grid.Row="13" Grid.ColumnSpan="4" FlowDirection="LeftToRight" Orientation="Horizontal" Margin="10">
+					<Button Name="btnTest" Margin="0,2,5,2"  Click="btnTest_Click" Width="120" Height="36" IsDefault="True" IsEnabled="{Binding IsInEditMode}">
+							<Label Content="_Test Connection" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5,0,5,0" />
+					</Button>
+					<Image Margin="10,0,10,0" Source="{Binding CurrentConnectionTest}" Height="24" Width="24" />
+				</StackPanel>	
+			</Grid>
+		</ScrollViewer>
+		<StackPanel Grid.Row="3" Grid.ColumnSpan="2" FlowDirection="LeftToRight"  Orientation="Horizontal" Margin="10,10,10,10">
+            <TextBlock Text="{x:Static re:SqlConnectionInfoControlRx.lblSCICFileName}"/>
+			<TextBlock Text="{Binding FileName}"/>
+		</StackPanel>
+
+	</Grid>
+</UserControl>
